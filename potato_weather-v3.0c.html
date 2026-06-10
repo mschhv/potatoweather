@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港戶外全方位氣象儀表板</title>
+    <title>薯仔天氣</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -187,7 +187,7 @@
 <body>
 
     <div id="header">
-        <h1>香港戶外全方位氣象儀表板</h1>
+        <h1>薯仔天氣 - 香港</h1>
         <p>實時氣溫 / 本地相對濕度 / 本地風速及風向整合地圖層</p>
         <div id="timestamp">⏱️ 正在連線至天文台氣象服務...</div>
     </div>
@@ -198,6 +198,21 @@
                 <div class="sidebar-label">🕒 系統本地時間</div>
                 <div id="live-clock">00:00:00</div>
             </div>
+
+<div class="sidebar-section">
+    <div class="sidebar-label">📊 今日氣溫</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 13px; display: flex; justify-content: space-between;">
+            <span>🔥 今日最高氣溫:</span>
+            <b id="hko-max-temp" style="color: #ef4444;">--°C</b>
+        </div>
+        <div style="font-size: 13px; display: flex; justify-content: space-between;">
+            <span>❄️ 今日最低氣溫:</span>
+            <b id="hko-min-temp" style="color: #38bdf8;">--°C</b>
+        </div>
+    </div>
+</div>
+
 
             <div class="sidebar-section">
                 <div class="sidebar-label">⚠️ 生效天氣警告</div>
@@ -807,6 +822,31 @@
                 timestampEl.innerHTML = `❌ 錯誤: ${error.message}`;
             }
         }
+
+
+
+async function fetchDailyExtremesZH() {
+    try {
+        const response = await fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=fnd&lang=tc");
+        const data = await response.json();
+        
+        // 抓取九天天氣預報當中的第一筆數據（即為今日預估極值）
+        if (data?.weatherForecast && data.weatherForecast.length > 0) {
+            const todayForecast = data.weatherForecast[0];
+            const maxVal = todayForecast.forecastMaxtemp?.value;
+            const minVal = todayForecast.forecastMintemp?.value;
+
+            if (maxVal !== undefined) document.getElementById('hko-max-temp').textContent = `${maxVal}°C`;
+            if (minVal !== undefined) document.getElementById('hko-min-temp').textContent = `${minVal}°C`;
+        }
+    } catch (error) {
+        console.error("獲取天文台本日極值失敗:", error);
+    }
+}
+
+// 頁面載入時自動執行
+fetchDailyExtremesZH();
+
 
         function renderMapLayers(stationData) {
             if (!map) return;
