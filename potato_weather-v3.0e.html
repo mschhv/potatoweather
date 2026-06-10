@@ -183,6 +183,28 @@
             #sidebar.open ~ #left-toggle { left: 315px; }
             #right-sidebar.open ~ #right-toggle { right: 335px; }
         }
+
+.lang-switch-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #2c2c2e;
+    color: #4DA8DA;
+    border: 1px solid #48484a;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.lang-switch-btn:hover {
+    background-color: #3a3a3c;
+    box-shadow: 0 0 10px rgba(77, 168, 218, 0.2);
+}
+
     </style>
 </head>
 <body>
@@ -191,6 +213,7 @@
         <h1>Potato Weather - Hong Kong</h1>
         <p>Live T / Local RH / Local Wind Speed Integrated Map Layer</p>
         <div id="timestamp">⏱️ Waiting to connect to weather services...</div>
+	<a href="potato_weather-v3.0c.html" class="lang-switch-btn">繁體中文</a>
     </div>
 
     <div id="app-viewport">
