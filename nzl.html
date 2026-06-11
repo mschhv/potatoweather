@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potato Weather</title>
+
+    <link class="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Potato Weather">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #121212; color: #ffffff; overflow: hidden; }
+        
+        #header { padding: 15px 20px; background-color: #1a1a1a; border-bottom: 2px solid #333; position: relative; z-index: 1025; text-align: center; }
+        h1 { margin: 0; font-size: 22px; color: #4DA8DA; }
+        p { margin: 5px 0 0 0; font-size: 13px; color: #999; }
+        #timestamp { margin: 6px 0 0 0; font-size: 12px; color: #22c55e; font-weight: bold; letter-spacing: 0.5px; transition: color 0.3s ease; }
+        
+        #app-viewport { display: flex; height: calc(100vh - 95px); width: 100%; position: relative; }
+        #map { flex: 1; height: 100%; z-index: 1; }
+        
+        #sidebar { 
+            width: 300px; 
+            background-color: #1c1c1e; 
+            border-right: 2px solid #333; 
+            box-sizing: border-box; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+            overflow-y: auto; 
+            height: 100%;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1010;
+        }
+
+        #right-sidebar {
+            width: 340px;
+            background-color: #1c1c1e;
+            border-left: 2px solid #333;
+            box-sizing: border-box;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            overflow-y: auto;
+            height: 100%;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1010;
+        }
+        
+        .sidebar-section { 
+            background-color: #26262a; 
+            border: 1px solid #3a3a3c; 
+            border-radius: 8px; 
+            padding: 15px; 
+        }
+        
+        .sidebar-label { 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            color: #8e8e93; 
+            letter-spacing: 1px; 
+            margin-bottom: 10px; 
+            font-weight: bold; 
+        }
+        
+        .view-nav-container { display: flex; flex-direction: column; gap: 8px; }
+        .nav-btn {
+            background-color: #2c2c2e;
+            color: #ccc;
+            border: 1px solid #48484a;
+            padding: 12px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover { background-color: #3a3a3c; color: #fff; }
+        .nav-btn.active {
+            background-color: #4DA8DA;
+            border-color: #4DA8DA;
+            color: #121212;
+            box-shadow: 0 4px 12px rgba(77, 168, 218, 0.25);
+        }
+        .nav-btn .badge-indicator {
+            font-size: 11px;
+            background-color: rgba(255,255,255,0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .nav-btn.active .badge-indicator {
+            background-color: rgba(18,18,18,0.15);
+            font-weight: bold;
+        }
+
+        #live-clock { 
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #4DA8DA; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-align: center; 
+            text-shadow: 0 0 10px rgba(77, 168, 218, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .hko-btn { 
+            display: block; 
+            background-color: #2c2c2e; 
+            color: #ffffff; 
+            text-align: center; 
+            padding: 10px; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            font-size: 13px; 
+            font-weight: 600; 
+            border: 1px solid #48484a; 
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+        .hko-btn:last-child { margin-bottom: 0; }
+        .hko-btn:hover { background-color: #3a3a3c; transform: translateY(-1px); }
+        
+        .wbgt-badge { 
+            background-color: #222; color: #fff; border-radius: 6px; font-weight: bold; 
+            font-size: 12px; text-align: center; padding: 6px 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6); cursor: pointer; 
+            transition: transform 0.2s; display: inline-block; line-height: 1.25; 
+            min-width: 54px; box-sizing: border-box; white-space: nowrap;
+        }
+        .wbgt-badge:hover { transform: scale(1.15); z-index: 9999 !important; }
+        
+        .leaflet-popup-content-wrapper { background-color: #2a2a2a; color: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .leaflet-popup-tip { background-color: #2a2a2a; }
+        .popup-title { font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #4DA8DA; border-bottom: 1px solid #444; padding-bottom: 4px;}
+        .popup-data { font-size: 13px; margin: 5px 0; color: #ccc; display: flex; align-items: center; gap: 6px; }
+        .popup-data b { color: #fff; }
+        .popup-divider { border-top: 1px solid #444; margin: 8px 0; }
+
+        .forecast-row {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            border-bottom: 1px solid #3a3a3c;
+        }
+        .forecast-row:last-child { border-bottom: none; }
+        .forecast-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .forecast-day { font-weight: 600; color: #ddd; }
+        .forecast-temps { font-weight: bold; }
+        .forecast-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        .forecast-desc { color: #aaa; font-weight: 500; }
+        .forecast-rain { color: #38bdf8; font-size: 11px; }
+
+        /* Floating Trigger Action Buttons */
+        .toggle-btn {
+            display: none;
+            position: absolute;
+            top: 15px;
+            background-color: #26262a;
+            color: #fff;
+            border: 1px solid #48484a;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 1020;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: all 0.2s ease;
+        }
+        .toggle-btn:hover { background-color: #3a3a3c; color: #4DA8DA; }
+        #left-toggle { left: 15px; }
+        #right-toggle { right: 15px; }
+
+        /* Sleek Close Handles Positioned Securely Outside Menus */
+        .close-menu-btn {
+            position: absolute;
+            top: 15px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #26262a;
+            border: 1px solid #48484a;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1030;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+        .close-menu-btn:hover { background-color: #ef4444; border-color: #ef4444; color: #fff; }
+
+        @media (max-width: 1440px) {
+            #sidebar { position: absolute; left: 0; top: 0; transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.6); }
+            #sidebar.open { transform: translateX(0); }
+            #right-sidebar { position: absolute; right: 0; top: 0; transform: translateX(100%); box-shadow: -5px 0 15px rgba(0,0,0,0.6); }
+            #right-sidebar.open { transform: translateX(0); }
+            
+            /* Show toggle hooks strictly if sidebars are completely shut */
+            .toggle-btn { display: block; }
+            
+            #sidebar.open ~ #left-close-btn { display: flex; left: 315px; }
+            #right-sidebar.open ~ #right-close-btn { display: flex; right: 355px; }
+        }
+
+        @media (max-width: 768px) {
+            .toggle-btn { top: 12px; padding: 8px 10px; font-size: 12px; }
+            #left-toggle { left: 10px; }
+            #right-toggle { right: 10px; top: 58px; } 
+            
+            #sidebar.open ~ #left-close-btn { left: 310px; }
+            #right-sidebar.open ~ #right-close-btn { right: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <h1>Potato Weather - New Zealand</h1>
+        <p>Live T / Local RH / Local Wind Speed Integrated Map Layer</p>
+        <div id="timestamp">⏱️ Waiting to connect to weather services...</div>
+    </div>
+
+    <div id="app-viewport">
+        <button id="left-toggle" class="toggle-btn" onclick="toggleLeftSidebar()">☰ System Menu</button>
+        
+        <div id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label">🕒 NZ Local Time</div>
+                <div id="live-clock">00:00:00</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">📊 Regional Highlights</div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 13px; display: flex; justify-content: space-between;">
+                        <span>🔥 Max Found Temp:</span>
+                        <b id="nz-max-temp" style="color: #ef4444;">--°C</b>
+                    </div>
+                    <div style="font-size: 13px; display: flex; justify-content: space-between;">
+                        <span>❄️ Min Found Temp:</span>
+                        <b id="nz-min-temp" style="color: #38bdf8;">--°C</b>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">🗺️ Map View Layers</div>
+                <div class="view-nav-container">
+                    <button class="nav-btn active" onclick="switchView('hi')" id="btn-hi">
+                        <span>✨ Feels Like (Apparent T)</span> <span class="badge-indicator">Wind-Aware</span>
+                    </button>
+                    <button class="nav-btn" onclick="switchView('wbgt')" id="btn-wbgt">
+                        <span>🎯 Outdoor WBGT</span> <span class="badge-indicator">Safety Index</span>
+                    </button>
+                    <button class="nav-btn" onclick="switchView('temp')" id="btn-temp">
+                        <span>🌡️ Ambient Temp</span> <span class="badge-indicator">°C</span>
+                    </button>
+                    <button class="nav-btn" onclick="switchView('wind')" id="btn-wind">
+                        <span>💨 Wind Speed &amp; Dir</span> <span class="badge-indicator">km/h</span>
+                    </button>
+                    <button class="nav-btn" onclick="switchView('gust')" id="btn-gust">
+                        <span>🌪️ Wind Gusts</span> <span class="badge-indicator">km/h</span>
+                    </button>
+                    <button class="nav-btn" onclick="switchView('rain')" id="btn-rain">
+                        <span>🌧️ Precipitation</span> <span class="badge-indicator">mm</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">🌏 Other Regions</div>
+                <a href="index.html" class="hko-btn lang-link">🇭🇰 Hong Kong (English)</a>
+                <a href="tc.html" class="hko-btn lang-link">🇭🇰 香港天氣 (繁體中文)</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">🌐 Weather Resources</div>
+                <a href="https://www.metservice.com" target="_blank" class="hko-btn">Official MetService</a>
+                <a href="https://open-meteo.com" target="_blank" class="hko-btn">Open-Meteo Platform</a>
+            </div>
+        </div>
+
+        <div id="map"></div>
+
+        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">📊 Summary ☰</button>
+
+        <div id="right-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label" id="outlook-label">🌤️ National Climate Outlook</div>
+                <div id="local-outlook-container" style="font-size: 13px; line-height: 1.5; color: #ccc;">
+                    Click any weather marker on the map to display its local today-view data and expanded 9-day outlook grids here.
+                </div>
+            </div>
+            
+            <div class="sidebar-section" id="forecast-section" style="display: none;">
+                <div class="sidebar-label">📅 9-Day Forecast Grid</div>
+                <div id="forecast-grid-container"></div>
+            </div>
+        </div>
+
+        <button id="left-close-btn" class="close-menu-btn" onclick="toggleLeftSidebar()">&times;</button>
+        <button id="right-close-btn" class="close-menu-btn" onclick="toggleRightSidebar()">&times;</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let cachedStationData = [];
+        let currentView = 'hi';
+
+        // Custom toggles that explicitly handle setting trigger visibility
+        function toggleLeftSidebar() { 
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('left-toggle');
+            sidebar.classList.toggle('open'); 
+            
+            if (sidebar.classList.contains('open')) {
+                toggleBtn.style.display = 'none';
+            } else {
+                // Ensure visibility is restored only on target mobile views
+                if (window.innerWidth <= 1440) {
+                    toggleBtn.style.display = 'block';
+                }
+            }
+        }
+
+        function toggleRightSidebar() { 
+            const sidebar = document.getElementById('right-sidebar');
+            const toggleBtn = document.getElementById('right-toggle');
+            sidebar.classList.toggle('open'); 
+
+            if (sidebar.classList.contains('open')) {
+                toggleBtn.style.display = 'none';
+            } else {
+                if (window.innerWidth <= 1440) {
+                    toggleBtn.style.display = 'block';
+                }
+            }
+        }
+
+        // Clock strictly localized to NZ Standard or Daylight savings timezone profiles
+        function runLiveClock() {
+            const clockElement = document.getElementById('live-clock');
+            if (!clockElement) return;
+            const now = new Date();
+            clockElement.textContent = now.toLocaleTimeString('en-NZ', { 
+                timeZone: 'Pacific/Auckland', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            });
+        }
+        setInterval(runLiveClock, 1000);
+        runLiveClock();
+
+        const nzStations = [
+            { name: "Auckland", lat: -36.8485, lon: 174.7633 },
+            { name: "Hamilton", lat: -37.7870, lon: 175.2793 },
+            { name: "Tauranga", lat: -37.6878, lon: 176.1651 },
+            { name: "Rotorua", lat: -38.1368, lon: 176.2497 },
+            { name: "Gisborne", lat: -38.6533, lon: 178.0042 },
+            { name: "New Plymouth", lat: -39.0556, lon: 174.0742 },
+            { name: "Napier", lat: -39.4928, lon: 176.9120 },
+            { name: "Whanganui", lat: -39.9333, lon: 175.0500 },
+            { name: "Palmerston North", lat: -40.3550, lon: 175.6117 },
+            { name: "Masterton", lat: -40.9594, lon: 175.6575 },
+            { name: "Wellington", lat: -41.2865, lon: 174.7762 },
+            { name: "Nelson", lat: -41.2706, lon: 173.2840 },
+            { name: "Picton", lat: -41.2931, lon: 174.0019 },
+            { name: "Blenheim", lat: -41.5160, lon: 173.9528 },
+            { name: "Westport", lat: -41.7550, lon: 171.6050 },
+            { name: "Greymouth", lat: -42.4504, lon: 171.2064 },
+            { name: "Christchurch", lat: -43.5321, lon: 172.6362 },
+            { name: "Queenstown", lat: -45.0312, lon: 168.6626 },
+            { name: "Dunedin", lat: -45.8788, lon: 170.5028 },
+            { name: "Invercargill", lat: -46.4131, lon: 168.3538 }
+        ];
+
+        const compassArrows = {
+            "N": "↓", "NNE": "↙", "NE": "↙", "ENE": "←", "E": "←", "ESE": "←", "SE": "↖", "SSE": "↖",
+            "S": "↑", "SSW": "↗", "SW": "↗", "WSW": "→", "W": "→", "WNW": "→", "NW": "↘", "NNW": "↘"
+        };
+
+        function getWeatherDescription(code) {
+            const wmocodes = {
+                0: "☀️ Clear Sky",
+                1: "🌤️ Mainly Clear", 2: "⛅ Partly Cloudy", 3: "☁️ Overcast",
+                45: "🌫️ Foggy", 48: "🌫️ Depositing Rime Fog",
+                51: "🌧️ Light Drizzle", 53: "🌧️ Moderate Drizzle", 55: "🌧️ Dense Drizzle",
+                56: "❄️ Light Freezing Drizzle", 57: "❄️ Dense Freezing Drizzle",
+                61: "🌧️ Slight Rain", 63: "🌧️ Moderate Rain", 65: "🌧️ Heavy Rain",
+                66: "❄️ Light Freezing Rain", 67: "❄️ Heavy Freezing Rain",
+                71: "🌨️ Slight Snow Fall", 73: "🌨️ Moderate Snow Fall", 75: "🌨️ Heavy Snow Fall",
+                77: "🌨️ Snow Grains",
+                80: "🌦️ Slight Rain Showers", 81: "🌦️ Moderate Rain Showers", 82: "🌦️ Violent Rain Showers",
+                85: "🌨️ Slight Snow Showers", 86: "🌨️ Heavy Snow Showers",
+                95: "⚡ Thunderstorm", 96: "⚡ Thunderstorm with Hail", 99: "⚡ Severe Thunderstorm"
+            };
+            return wmocodes[code] || "🌤️ Variable Conditions";
+        }
+
+        const getWindDirection = (deg) => {
+            const directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+            return directions[Math.round(deg / 22.5) % 16];
+        };
+
+        function getUnifiedHeatColor(value) {
+            if (value >= 30.0) return '#ef4444'; 
+            if (value >= 25.0) return '#eab308'; 
+            if (value >= 18.0) return '#22c55e'; 
+            if (value >= 10.0) return '#00b8b2'; 
+            if (value >= 6.0) return '#38bdf8';
+            return '#3b82f6'; 
+        }
+
+        function getUnifiedFunnyText(value) {
+            if (value >= 30.0) return "🥵 Kiwi burger in the making. Seek immediate shade.";
+            if (value >= 25.0) return "☀️ Warm and clear. Ideal beach conditions.";
+            if (value >= 18.0) return "🟢 Sweet as temps mate, time to whip out the gumboots.";
+            if (value >= 10.0) return "🌤️ Still shorts weather for the avg kiwi, but keep the fire going.";
+            if (value >= 6.0) return "🧥 Puffer jacket mandatory. Sorry no more shorts.";
+            return "🏔️ Frosty. Flat white coffee consumption must increase immediately.";
+        }
+
+        function getWindColor(kmh) {
+            if (kmh >= 60) return '#ef4444';
+            if (kmh >= 35) return '#f97316';
+            if (kmh >= 15) return '#eab308';
+            return '#22c55e';
+        }
+
+        function getRainColor(mm) {
+            if (mm >= 10) return '#38bdf8';
+            if (mm > 0) return '#1d4ed8';
+            return '#374151';
+        }
+
+        function switchView(targetView) {
+            currentView = targetView;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${targetView}`).classList.add('active');
+            
+            if (cachedStationData.length > 0) {
+                renderMapLayers();
+            }
+            if (window.innerWidth <= 1440) {
+                toggleLeftSidebar(); 
+            }
+        }
+
+        async function fetchSidebarForecast(station) {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${station.lat}&longitude=${station.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=Pacific%2FAuckland&forecast_days=9`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                document.getElementById('outlook-label').innerText = `🌤️ Today's Outlook: ${station.name}`;
+                document.getElementById('local-outlook-container').innerHTML = `
+                    <div style="font-size: 14px; margin-bottom: 8px; color: #4DA8DA; font-weight: bold;">
+                        Current Operational Status
+                    </div>
+                    <div style="margin-bottom: 6px;">🌡️ Temperature Now: <b>${station.T.toFixed(1)}°C</b> (Feels Like: ${station.hiVal.toFixed(1)}°C)</div>
+                    <div style="margin-bottom: 6px;">💨 Current Winds: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
+                    <div style="margin-bottom: 6px;">💧 Relative Humidity: <b>${station.RH}%</b></div>
+                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 6px; font-style: italic; color: ${getUnifiedHeatColor(station.hiVal)};">
+                        ${getUnifiedFunnyText(station.hiVal)}
+                    </div>
+                `;
+
+                const gridContainer = document.getElementById('forecast-grid-container');
+                gridContainer.innerHTML = ''; 
+                
+                const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+                for (let i = 0; i < data.daily.time.length; i++) {
+                    const dateObj = new Date(data.daily.time[i]);
+                    const dayName = i === 0 ? "Today" : daysOfWeek[dateObj.getDay()];
+                    const dateString = `${dateObj.getDate()} ${(dateObj.toLocaleString('en-NZ', {month: 'short'}))}`;
+
+                    const maxT = data.daily.temperature_2m_max[i].toFixed(0);
+                    const minT = data.daily.temperature_2m_min[i].toFixed(0);
+                    const rainSum = data.daily.precipitation_sum[i];
+                    const conditionCode = data.daily.weather_code[i];
+                    
+                    const conditionText = getWeatherDescription(conditionCode);
+                    const rainDisplay = rainSum > 0 ? `🌧️ ${rainSum.toFixed(1)}mm` : `☀️ 0mm`;
+
+                    const row = document.createElement('div');
+                    row.className = 'forecast-row';
+                    row.innerHTML = `
+                        <div class="forecast-meta">
+                            <div class="forecast-day">${dayName} <span style="font-size:10px; font-weight:normal; color:#8e8e93;">(${dateString})</span></div>
+                            <div class="forecast-temps">
+                                <span style="color:#ef4444;">${maxT}°</span> / <span style="color:#38bdf8;">${minT}°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-details">
+                            <div class="forecast-desc">${conditionText}</div>
+                            <div class="forecast-rain">${rainDisplay}</div>
+                        </div>
+                    `;
+                    gridContainer.appendChild(row);
+                }
+
+                document.getElementById('forecast-section').style.display = 'block';
+                
+                if (window.innerWidth <= 1440) {
+                    const rightSidebar = document.getElementById('right-sidebar');
+                    if (!rightSidebar.classList.contains('open')) {
+                        toggleRightSidebar();
+                    }
+                }
+
+            } catch (err) {
+                console.error("Error fetching multi-day forecast grid:", err);
+            }
+        }
+
+        async function initAndFetchWeather() {
+            try {
+                // Initialize map with zoom Control disabled initially to relocate it securely down-right
+                map = L.map('map', { zoomControl: false }).setView([-40.9006, 174.8860], 6);
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap contributors © CARTO'
+                }).addTo(map);
+
+                // Relocate Zoom configuration directly into the bottom-right zone safely out of the menu's line of fire
+                L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+                document.getElementById('timestamp').innerText = "⏱️ Connecting to weather networks...";
+                cachedStationData = [];
+
+                let totalMax = -999;
+                let totalMin = 999;
+
+                for (const station of nzStations) {
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${station.lat}&longitude=${station.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m`;
+                    
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    const T = data.current.temperature_2m;
+                    const RH = data.current.relative_humidity_2m;
+                    const windSpeedKmh = data.current.wind_speed_10m;
+                    const dirStr = getWindDirection(data.current.wind_direction_10m);
+                    const gustsKmh = data.current.wind_gusts_10m;
+                    const rain = data.current.precipitation;
+                    
+                    const windMS = windSpeedKmh / 3.6;
+                    const e = (RH / 100) * 6.105 * Math.exp((17.27 * T) / (237.7 + T));
+                    let hiVal = T + (0.348 * e) - (0.22 * windMS) - 2.0;
+                    if (T < 10) { 
+                        hiVal = 13.12 + (0.6215 * T) - (11.37 * Math.pow(windSpeedKmh, 0.16)) + (0.3965 * T * Math.pow(windSpeedKmh, 0.16));
+                    }
+                    if (hiVal > T && T < 15) hiVal = T; 
+
+                    if (T > totalMax) totalMax = T;
+                    if (T < totalMin) totalMin = T;
+
+                    const calculatedTw = T * 0.7 + 3.5;
+                    const calculatedTg = hiVal * 1.02 + 0.5;
+                    const calculatedWbgt = T * 0.7 + calculatedTw * 0.2 + 1.5;
+
+                    cachedStationData.push({
+                        name: station.name, lat: station.lat, lon: station.lon,
+                        T: T, RH: RH, windSpeedKmh: windSpeedKmh, dir: dirStr, gustsKmh: gustsKmh, rain: rain, hiVal: hiVal,
+                        wbgtResults: { Tw: calculatedTw, Tg: calculatedTg, wbgt: calculatedWbgt }
+                    });
+                }
+
+                document.getElementById('nz-max-temp').innerText = totalMax.toFixed(1) + "°C";
+                document.getElementById('nz-min-temp').innerText = totalMin.toFixed(1) + "°C";
+
+                renderMapLayers();
+                document.getElementById('timestamp').innerText = "⏱️ Connected to weather networks • Live updates active";
+
+            } catch (err) {
+                console.error("Error running NZ weather dashboard:", err);
+                document.getElementById('timestamp').innerText = "❌ Error connecting to weather networks";
+            }
+        }
+
+        function renderMapLayers() {
+            if (!map) return;
+
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) map.removeLayer(layer);
+            });
+
+            cachedStationData.forEach(station => {
+                let displayVal = "";
+                let badgeColor = "#22c55e";
+
+                if (currentView === 'hi') {
+                    displayVal = station.hiVal.toFixed(1) + "°C";
+                    badgeColor = getUnifiedHeatColor(station.hiVal);
+                } else if (currentView === 'wbgt') {
+                    displayVal = station.wbgtResults.wbgt.toFixed(1) + "°C";
+                    badgeColor = getUnifiedHeatColor(station.hiVal);
+                } else if (currentView === 'temp') {
+                    displayVal = station.T.toFixed(1) + "°C";
+                    badgeColor = getUnifiedHeatColor(station.hiVal);
+                } else if (currentView === 'wind') {
+                    const arrow = compassArrows[station.dir] || "•";
+                    displayVal = `${station.windSpeedKmh.toFixed(0)}<span> km/h</span> </br> <span style="font-size:13px; color:#4DA8DA;">${arrow}</span>`;
+                    badgeColor = getWindColor(station.windSpeedKmh);
+                } else if (currentView === 'gust') {
+                    displayVal = station.gustsKmh > 0 ? station.gustsKmh.toFixed(0) + " km/h" : "0 km/h";
+                    badgeColor = getWindColor(station.gustsKmh);
+                } else if (currentView === 'rain') {
+                    displayVal = station.rain.toFixed(1) + " mm";
+                    badgeColor = getRainColor(station.rain);
+                }
+
+                const customIcon = L.divIcon({
+                    className: '',
+                    html: `<div class="wbgt-badge" style="border: 2px solid ${badgeColor};">${displayVal}</div>`,
+                    iconAnchor: [30, 15],
+                    iconSize: null
+                });
+
+                const marker = L.marker([station.lat, station.lon], { icon: customIcon }).addTo(map);
+
+                marker.on('click', function() {
+                    fetchSidebarForecast(station);
+                });
+
+                marker.bindPopup(`
+                    <div class="popup-title">${station.name}</div>
+                    <div class="popup-data" style="${currentView === 'temp' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌡️ Ambient (T): <b>${station.T.toFixed(1)}°C</b></div>
+                    <div class="popup-data">💧 Rel. Humidity: <b>${station.RH}%</b></div>
+                    <div class="popup-data" style="${currentView === 'wind' ? 'font-weight:bold; color:#4DA8DA;' : ''}">💨 Wind Speed: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
+                    <div class="popup-data" style="${currentView === 'gust' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌪️ Max Gusts: <b>${station.gustsKmh > 0 ? station.gustsKmh.toFixed(1) + ' km/h' : 'N/A'}</b></div>
+                    <div class="popup-data" style="${currentView === 'rain' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌧️ Precipitation: <b>${station.rain.toFixed(1)} mm</b></div>
+                    <div class="popup-divider"></div>
+                    <div class="popup-data">🧪 Wet-Bulb (Tw): <b>${station.wbgtResults.Tw.toFixed(1)}°C</b></div>
+                    <div class="popup-data" style="color: #bbb;">☀️ Est. Globe (Tg): <b>${station.wbgtResults.Tg.toFixed(1)}°C</b></div>
+                    <div class="popup-divider"></div>
+                    <div class="popup-data" style="font-size: 14px; ${currentView === 'hi' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">✨ Apparent Temp (Feels Like): <b>${station.hiVal.toFixed(1)}°C</b></div>
+                    <div class="popup-data" style="font-size: 14px; ${currentView === 'wbgt' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">🎯 Outdoor WBGT: <b>${station.wbgtResults.wbgt.toFixed(1)}°C</b></div>
+                    <div class="popup-divider"></div>
+                    <div class="popup-data" style="font-size:12px; font-weight:600; color:${getUnifiedHeatColor(station.hiVal)};">
+                        Current Status: ${getUnifiedFunnyText(station.hiVal)}
+                    </div>
+                `, { offset: [0, -10], minWidth: 260 });
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initAndFetchWeather);
+    </script>
+</body>
+</html>
