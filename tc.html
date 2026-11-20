@@ -163,13 +163,12 @@
             transition: all 0.3s ease-in-out;
         }
         .toggle-btn:hover { background-color: #3a3a3c; color: #4DA8DA; }
-        #left-toggle { left: 15px; top: 75px; }
-        #right-toggle { right: 15px; top: 75px; }
+        #left-toggle { left: 15px; top: 15px; }
+        #right-toggle { right: 15px; top: 15px; }
 
-        /* Sleek Close Handles Positioned Securely Outside Menus */
         .close-menu-btn {
             position: absolute;
-            top: 75px;
+            top: 15px;
             width: 34px;
             height: 34px;
             border-radius: 50%;
@@ -213,10 +212,32 @@
             #right-sidebar.open ~ #right-close-btn { display: flex; right: 335px; }
         }
 
-                @media (max-width: 768px) {
+        @media (max-width: 768px) {
+            /* Header text */
+            #header { padding: 10px 14px; }
+            h1 { font-size: 18px; }
+            #header p { font-size: 11px; }
+            #timestamp { font-size: 11px; }
+            #app-viewport { height: calc(100vh - 82px); }
+
+            /* Menu toggle buttons */
+            .toggle-btn { top: 12px; padding: 7px 10px; font-size: 11px; }
             #left-toggle { left: 10px; }
-            #right-toggle { right: 10px; top: 120px; } 
-            
+            #right-toggle { right: 10px; }
+            .close-menu-btn { top: 12px; }
+
+            /* Sidebar text & buttons */
+            .sidebar-label { font-size: 10px; }
+            .nav-btn, .hko-btn { font-size: 12px; padding: 9px 11px; }
+            .nav-btn .badge-indicator { font-size: 10px; }
+            #live-clock { font-size: 22px; }
+            #local-outlook-container { font-size: 12px !important; }
+
+            /* Map badges & popups */
+            .wbgt-badge { font-size: 11px; padding: 4px 7px; min-width: 42px; }
+            .popup-title { font-size: 14px; }
+            .popup-data { font-size: 12px; }
+
             #sidebar.open ~ #left-close-btn { left: 310px; }
             #right-sidebar.open ~ #right-close-btn { right: 330px; }
         }
@@ -249,25 +270,25 @@
     <div id="header">
         <h1>薯仔天氣 - 香港</h1>
         <p>實時氣溫 / 本地相對濕度 / 本地風速及風向整合地圖層</p>
-        <div id="timestamp">⏱️ 正在連線至天文台氣象服務...</div>
+        <div id="timestamp">正在連線至天文台氣象服務...</div>
     </div>
 
     <div id="app-viewport">
         <div id="sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label">🕒 系統本地時間</div>
+                <div class="sidebar-label">系統本地時間</div>
                 <div id="live-clock">00:00:00</div>
             </div>
 
 <div class="sidebar-section">
-    <div class="sidebar-label">📊 今日氣溫</div>
+    <div class="sidebar-label">今日氣溫</div>
     <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-size: 13px; display: flex; justify-content: space-between;">
-            <span>🔥 今日最高氣溫:</span>
+            <span>今日最高氣溫:</span>
             <b id="hko-max-temp" style="color: #ef4444;">--°C</b>
         </div>
         <div style="font-size: 13px; display: flex; justify-content: space-between;">
-            <span>❄️ 今日最低氣溫:</span>
+            <span>今日最低氣溫:</span>
             <b id="hko-min-temp" style="color: #38bdf8;">--°C</b>
         </div>
     </div>
@@ -275,51 +296,51 @@
 
 
             <div class="sidebar-section">
-                <div class="sidebar-label">⚠️ 生效天氣警告</div>
+                <div class="sidebar-label">生效天氣警告</div>
                 <div id="warnings-container" style="display: flex; flex-direction: column; gap: 6px;">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">正在讀取天文台警告網絡...</span>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">☀️ 實時紫外線指數</div>
+                <div class="sidebar-label">實時紫外線指數</div>
                 <div id="uv-container">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">正在監測太陽輻射量...</span>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🗺️ 地圖數據圖層</div>
+                <div class="sidebar-label">地圖數據圖層</div>
                 <div class="view-nav-container">
                     <button class="nav-btn active" onclick="switchView('hi')" id="btn-hi">
-                        <span>✨ 體感溫度 (酷熱指數)</span> <span class="badge-indicator">考慮風速</span>
+                        <span>體感溫度 (酷熱指數)</span> <span class="badge-indicator">考慮風速</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wbgt')" id="btn-wbgt">
-                        <span>🎯 戶外暑熱指數</span> <span class="badge-indicator">安全指標</span>
+                        <span>戶外暑熱指數</span> <span class="badge-indicator">安全指標</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('temp')" id="btn-temp">
-                        <span>🌡️ 環境溫度</span> <span class="badge-indicator">°C</span>
+                        <span>環境溫度</span> <span class="badge-indicator">°C</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wind')" id="btn-wind">
-                        <span>💨 風速及風向</span> <span class="badge-indicator">km/h</span>
+                        <span>風速及風向</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('gust')" id="btn-gust">
-                        <span>🌪️ 實時陣風</span> <span class="badge-indicator">km/h</span>
+                        <span>實時陣風</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('rain')" id="btn-rain">
-                        <span>🌧️ 每小時降雨量</span> <span class="badge-indicator">mm</span>
+                        <span>每小時降雨量</span> <span class="badge-indicator">mm</span>
                     </button>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌏 其他地區</div>
+                <div class="sidebar-label">其他地區</div>
                 <a href="index.html" class="hko-btn lang-link">Hong Kong Weather (English)</a>
                 <a href="nzl.html" class="hko-btn lang-link">紐西蘭天氣</a>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌐 天文台常用連結</div>
+                <div class="sidebar-label">天文台常用連結</div>
                 <a href="https://www.hko.gov.hk/tc/index.html" target="_blank" class="hko-btn">香港天文台官網</a>
                 <a href="https://www.hko.gov.hk/tc/wxinfo/currwx/current.htm" target="_blank" class="hko-btn">當前詳細天氣狀況</a>
                 <a href="https://www.hko.gov.hk/tc/opendata/index.htm" target="_blank" class="hko-btn">天文台開放數據平台</a>
@@ -330,13 +351,13 @@
 
         <div id="right-sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label">☀️ 今日天氣預報</div>
+                <div class="sidebar-label">今日天氣預報</div>
                 <div id="local-outlook-container" style="font-size: 13px; line-height: 1.5; color: #ccc; font-style: italic;">
                     正在獲取短期天氣簡報...
                 </div>
             </div>
             <div class="sidebar-section">
-                <div class="sidebar-label">📅 九天天氣預報</div>
+                <div class="sidebar-label">九天天氣預報</div>
                 <div id="forecast-grid-container" style="display: flex; flex-direction: column; gap: 10px;">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">正在讀取天文台預報時間線...</span>
                 </div>
@@ -344,7 +365,7 @@
         </div>
 
         <button id="left-toggle" class="toggle-btn" onclick="toggleLeftSidebar()">☰ 系統選單</button>
-        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">📅 預報摘要 ☰</button>
+        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">預報摘要 ☰</button>
     
         <!-- Floating Circular Exit Handles -->
         <button id="left-close-btn" class="close-menu-btn" onclick="toggleLeftSidebar()">&times;</button>
@@ -358,33 +379,72 @@
         let cachedStationData = null;
         let currentView = 'hi';
 
-                function toggleLeftSidebar() { 
+        function toggleLeftSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
             const toggleBtn = document.getElementById('left-toggle');
-            sidebar.classList.toggle('open'); 
-            
+            const otherToggleBtn = document.getElementById('right-toggle');
+
+            if (rightSidebar && rightSidebar.classList.contains('open')) {
+                rightSidebar.classList.remove('open');
+                if (otherToggleBtn && window.innerWidth <= 1440) {
+                    otherToggleBtn.style.display = 'block';
+                }
+            }
+
+            sidebar.classList.toggle('open');
+
             if (sidebar.classList.contains('open')) {
                 toggleBtn.style.display = 'none';
+                if (otherToggleBtn) otherToggleBtn.style.display = 'none';
             } else {
                 if (window.innerWidth <= 1440) {
                     toggleBtn.style.display = 'block';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'block';
                 }
             }
         }
 
-        function toggleRightSidebar() { 
-            const sidebar = document.getElementById('right-sidebar');
+        function toggleRightSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
             const toggleBtn = document.getElementById('right-toggle');
-            sidebar.classList.toggle('open'); 
+            const otherToggleBtn = document.getElementById('left-toggle');
 
-            if (sidebar.classList.contains('open')) {
+            if (sidebar && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                if (otherToggleBtn && window.innerWidth <= 1440) {
+                    otherToggleBtn.style.display = 'block';
+                }
+            }
+
+            rightSidebar.classList.toggle('open');
+
+            if (rightSidebar.classList.contains('open')) {
                 toggleBtn.style.display = 'none';
+                if (otherToggleBtn) otherToggleBtn.style.display = 'none';
             } else {
                 if (window.innerWidth <= 1440) {
                     toggleBtn.style.display = 'block';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'block';
                 }
             }
         }
+
+        window.addEventListener('resize', () => {
+            const leftOpen = document.getElementById('sidebar')?.classList.contains('open');
+            const rightOpen = document.getElementById('right-sidebar')?.classList.contains('open');
+            const leftToggle = document.getElementById('left-toggle');
+            const rightToggle = document.getElementById('right-toggle');
+
+            if (window.innerWidth > 1440) {
+                if (leftToggle) leftToggle.style.display = 'none';
+                if (rightToggle) rightToggle.style.display = 'none';
+            } else {
+                if (leftToggle) leftToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+                if (rightToggle) rightToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+            }
+        });
 
         function runLiveClock() {
             const clockElement = document.getElementById('live-clock');
@@ -681,10 +741,11 @@
                 if (typeof L === 'undefined') throw new Error("Leaflet 地圖引擎加載失敗。");
 
                 if (!map) {
-                    map = L.map('map').setView([22.36, 114.14], 11);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    map = L.map('map', { zoomControl: false }).setView([22.36, 114.14], 11);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_5cph_1_b78e6b6881d9ea36d1c6c807', {
                         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20
                     }).addTo(map);
+                    L.control.zoom({ position: 'bottomright' }).addTo(map);
                 }
 
                 timestampEl.style.color = "#eab308";

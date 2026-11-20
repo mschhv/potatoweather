@@ -188,10 +188,9 @@
             transition: all 0.2s ease;
         }
         .toggle-btn:hover { background-color: #3a3a3c; color: #4DA8DA; }
-        #left-toggle { left: 15px; }
-        #right-toggle { right: 15px; }
+        #left-toggle { left: 15px; top: 15px; }
+        #right-toggle { right: 15px; top: 15px; }
 
-        /* Sleek Close Handles Positioned Securely Outside Menus */
         .close-menu-btn {
             position: absolute;
             top: 15px;
@@ -227,12 +226,33 @@
         }
 
         @media (max-width: 768px) {
-            .toggle-btn { top: 12px; padding: 8px 10px; font-size: 12px; }
+            /* Header text */
+            #header { padding: 10px 14px; }
+            h1 { font-size: 18px; }
+            #header p { font-size: 11px; }
+            #timestamp { font-size: 11px; }
+            #app-viewport { height: calc(100vh - 82px); }
+
+            /* Menu toggle buttons */
+            .toggle-btn { top: 12px; padding: 7px 10px; font-size: 11px; }
             #left-toggle { left: 10px; }
-            #right-toggle { right: 10px; top: 58px; } 
-            
+            #right-toggle { right: 10px; }
+            .close-menu-btn { top: 12px; }
+
+            /* Sidebar text & buttons */
+            .sidebar-label { font-size: 10px; }
+            .nav-btn, .hko-btn { font-size: 12px; padding: 9px 11px; }
+            .nav-btn .badge-indicator { font-size: 10px; }
+            #live-clock { font-size: 22px; }
+            #local-outlook-container { font-size: 12px !important; }
+
+            /* Map badges & popups */
+            .wbgt-badge { font-size: 11px; padding: 4px 7px; min-width: 42px; }
+            .popup-title { font-size: 14px; }
+            .popup-data { font-size: 12px; }
+
             #sidebar.open ~ #left-close-btn { left: 310px; }
-            #right-sidebar.open ~ #right-close-btn { right: 350px; }
+            #right-sidebar.open ~ #right-close-btn { right: 330px; }
         }
     </style>
 </head>
@@ -241,7 +261,7 @@
     <div id="header">
         <h1>Potato Weather - New Zealand</h1>
         <p>Live T / Local RH / Local Wind Speed Integrated Map Layer</p>
-        <div id="timestamp">⏱️ Waiting to connect to weather services...</div>
+        <div id="timestamp">Waiting to connect to weather services...</div>
     </div>
 
     <div id="app-viewport">
@@ -249,19 +269,19 @@
         
         <div id="sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label">🕒 NZ Local Time</div>
+                <div class="sidebar-label">NZ Local Time</div>
                 <div id="live-clock">00:00:00</div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">📊 Regional Highlights</div>
+                <div class="sidebar-label">Regional Highlights</div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="font-size: 13px; display: flex; justify-content: space-between;">
-                        <span>🔥 Max Found Temp:</span>
+                        <span>Max Found Temp:</span>
                         <b id="nz-max-temp" style="color: #ef4444;">--°C</b>
                     </div>
                     <div style="font-size: 13px; display: flex; justify-content: space-between;">
-                        <span>❄️ Min Found Temp:</span>
+                        <span>Min Found Temp:</span>
                         <b id="nz-min-temp" style="color: #38bdf8;">--°C</b>
                     </div>
                 </div>
@@ -271,34 +291,34 @@
                 <div class="sidebar-label">🗺️ Map View Layers</div>
                 <div class="view-nav-container">
                     <button class="nav-btn active" onclick="switchView('hi')" id="btn-hi">
-                        <span>✨ Feels Like (Apparent T)</span> <span class="badge-indicator">Wind-Aware</span>
+                        <span>Feels Like (Apparent T)</span> <span class="badge-indicator">Wind-Aware</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wbgt')" id="btn-wbgt">
-                        <span>🎯 Outdoor WBGT</span> <span class="badge-indicator">Safety Index</span>
+                        <span>Outdoor WBGT</span> <span class="badge-indicator">Safety Index</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('temp')" id="btn-temp">
-                        <span>🌡️ Ambient Temp</span> <span class="badge-indicator">°C</span>
+                        <span>Ambient Temp</span> <span class="badge-indicator">°C</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wind')" id="btn-wind">
-                        <span>💨 Wind Speed &amp; Dir</span> <span class="badge-indicator">km/h</span>
+                        <span>Wind Speed &amp; Dir</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('gust')" id="btn-gust">
-                        <span>🌪️ Wind Gusts</span> <span class="badge-indicator">km/h</span>
+                        <span>Wind Gusts</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('rain')" id="btn-rain">
-                        <span>🌧️ Precipitation</span> <span class="badge-indicator">mm</span>
+                        <span>Precipitation</span> <span class="badge-indicator">mm</span>
                     </button>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌏 Other Regions</div>
-                <a href="index.html" class="hko-btn lang-link">🇭🇰 Hong Kong (English)</a>
-                <a href="tc.html" class="hko-btn lang-link">🇭🇰 香港天氣 (繁體中文)</a>
+                <div class="sidebar-label">Other Regions</div>
+                <a href="index.html" class="hko-btn lang-link">Hong Kong (English)</a>
+                <a href="tc.html" class="hko-btn lang-link">香港天氣 (繁體中文)</a>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌐 Weather Resources</div>
+                <div class="sidebar-label">Weather Resources</div>
                 <a href="https://www.metservice.com" target="_blank" class="hko-btn">Official MetService</a>
                 <a href="https://open-meteo.com" target="_blank" class="hko-btn">Open-Meteo Platform</a>
             </div>
@@ -306,18 +326,18 @@
 
         <div id="map"></div>
 
-        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">📊 Summary ☰</button>
+        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">Summary ☰</button>
 
         <div id="right-sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label" id="outlook-label">🌤️ National Climate Outlook</div>
+                <div class="sidebar-label" id="outlook-label">National Climate Outlook</div>
                 <div id="local-outlook-container" style="font-size: 13px; line-height: 1.5; color: #ccc;">
                     Click any weather marker on the map to display its local today-view data and expanded 9-day outlook grids here.
                 </div>
             </div>
             
             <div class="sidebar-section" id="forecast-section" style="display: none;">
-                <div class="sidebar-label">📅 9-Day Forecast Grid</div>
+                <div class="sidebar-label">9-Day Forecast Grid</div>
                 <div id="forecast-grid-container"></div>
             </div>
         </div>
@@ -333,34 +353,72 @@
         let currentView = 'hi';
 
         // Custom toggles that explicitly handle setting trigger visibility
-        function toggleLeftSidebar() { 
+        function toggleLeftSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
             const toggleBtn = document.getElementById('left-toggle');
-            sidebar.classList.toggle('open'); 
-            
-            if (sidebar.classList.contains('open')) {
-                toggleBtn.style.display = 'none';
-            } else {
-                // Ensure visibility is restored only on target mobile views
-                if (window.innerWidth <= 1440) {
-                    toggleBtn.style.display = 'block';
+            const otherToggleBtn = document.getElementById('right-toggle');
+
+                if (rightSidebar && rightSidebar.classList.contains('open')) {
+                    rightSidebar.classList.remove('open');
+                    if (otherToggleBtn && window.innerWidth <= 1440) {
+                        otherToggleBtn.style.display = 'block';
+                    }
+                }
+
+                sidebar.classList.toggle('open');
+
+                if (sidebar.classList.contains('open')) {
+                    toggleBtn.style.display = 'none';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'none';
+                } else {
+                    if (window.innerWidth <= 1440) {
+                        toggleBtn.style.display = 'block';
+                        if (otherToggleBtn) otherToggleBtn.style.display = 'block';
+                    }
                 }
             }
-        }
 
-        function toggleRightSidebar() { 
-            const sidebar = document.getElementById('right-sidebar');
-            const toggleBtn = document.getElementById('right-toggle');
-            sidebar.classList.toggle('open'); 
+            function toggleRightSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const rightSidebar = document.getElementById('right-sidebar');
+                const toggleBtn = document.getElementById('right-toggle');
+                const otherToggleBtn = document.getElementById('left-toggle');
 
-            if (sidebar.classList.contains('open')) {
-                toggleBtn.style.display = 'none';
-            } else {
-                if (window.innerWidth <= 1440) {
-                    toggleBtn.style.display = 'block';
+                if (sidebar && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    if (otherToggleBtn && window.innerWidth <= 1440) {
+                        otherToggleBtn.style.display = 'block';
+                    }
+                }
+
+                rightSidebar.classList.toggle('open');
+
+                if (rightSidebar.classList.contains('open')) {
+                    toggleBtn.style.display = 'none';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'none';
+                } else {
+                    if (window.innerWidth <= 1440) {
+                        toggleBtn.style.display = 'block';
+                        if (otherToggleBtn) otherToggleBtn.style.display = 'block';
+                    }
                 }
             }
-        }
+
+        window.addEventListener('resize', () => {
+            const leftOpen = document.getElementById('sidebar')?.classList.contains('open');
+            const rightOpen = document.getElementById('right-sidebar')?.classList.contains('open');
+            const leftToggle = document.getElementById('left-toggle');
+            const rightToggle = document.getElementById('right-toggle');
+
+            if (window.innerWidth > 1440) {
+                if (leftToggle) leftToggle.style.display = 'none';
+                if (rightToggle) rightToggle.style.display = 'none';
+            } else {
+                if (leftToggle) leftToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+                if (rightToggle) rightToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+            }
+        });
 
         // Clock strictly localized to NZ Standard or Daylight savings timezone profiles
         function runLiveClock() {
@@ -479,14 +537,14 @@
                 const response = await fetch(url);
                 const data = await response.json();
 
-                document.getElementById('outlook-label').innerText = `🌤️ Today's Outlook: ${station.name}`;
+                document.getElementById('outlook-label').innerText = `Today's Outlook: ${station.name}`;
                 document.getElementById('local-outlook-container').innerHTML = `
                     <div style="font-size: 14px; margin-bottom: 8px; color: #4DA8DA; font-weight: bold;">
                         Current Operational Status
                     </div>
-                    <div style="margin-bottom: 6px;">🌡️ Temperature Now: <b>${station.T.toFixed(1)}°C</b> (Feels Like: ${station.hiVal.toFixed(1)}°C)</div>
-                    <div style="margin-bottom: 6px;">💨 Current Winds: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
-                    <div style="margin-bottom: 6px;">💧 Relative Humidity: <b>${station.RH}%</b></div>
+                    <div style="margin-bottom: 6px;">Temperature Now: <b>${station.T.toFixed(1)}°C</b> (Feels Like: ${station.hiVal.toFixed(1)}°C)</div>
+                    <div style="margin-bottom: 6px;">Current Winds: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
+                    <div style="margin-bottom: 6px;">Relative Humidity: <b>${station.RH}%</b></div>
                     <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 6px; font-style: italic; color: ${getUnifiedHeatColor(station.hiVal)};">
                         ${getUnifiedFunnyText(station.hiVal)}
                     </div>
@@ -546,14 +604,14 @@
                 // Initialize map with zoom Control disabled initially to relocate it securely down-right
                 map = L.map('map', { zoomControl: false }).setView([-40.9006, 174.8860], 6);
 
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '© OpenStreetMap contributors © CARTO'
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_5cph_1_b78e6b6881d9ea36d1c6c807', {
+                    attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20
                 }).addTo(map);
 
                 // Relocate Zoom configuration directly into the bottom-right zone safely out of the menu's line of fire
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-                document.getElementById('timestamp').innerText = "⏱️ Connecting to weather networks...";
+                document.getElementById('timestamp').innerText = "Connecting to weather networks...";
                 cachedStationData = [];
 
                 let totalMax = -999;
@@ -598,7 +656,7 @@
                 document.getElementById('nz-min-temp').innerText = totalMin.toFixed(1) + "°C";
 
                 renderMapLayers();
-                document.getElementById('timestamp').innerText = "⏱️ Connected to weather networks • Live updates active";
+                document.getElementById('timestamp').innerText = "Connected to weather networks • Live updates active";
 
             } catch (err) {
                 console.error("Error running NZ weather dashboard:", err);
@@ -647,23 +705,23 @@
 
                 const marker = L.marker([station.lat, station.lon], { icon: customIcon }).addTo(map);
 
-                marker.on('click', function() {
-                    fetchSidebarForecast(station);
-                });
+                //marker.on('click', function() {
+                    //fetchSidebarForecast(station);
+                //});
 
                 marker.bindPopup(`
                     <div class="popup-title">${station.name}</div>
-                    <div class="popup-data" style="${currentView === 'temp' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌡️ Ambient (T): <b>${station.T.toFixed(1)}°C</b></div>
-                    <div class="popup-data">💧 Rel. Humidity: <b>${station.RH}%</b></div>
-                    <div class="popup-data" style="${currentView === 'wind' ? 'font-weight:bold; color:#4DA8DA;' : ''}">💨 Wind Speed: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
-                    <div class="popup-data" style="${currentView === 'gust' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌪️ Max Gusts: <b>${station.gustsKmh > 0 ? station.gustsKmh.toFixed(1) + ' km/h' : 'N/A'}</b></div>
-                    <div class="popup-data" style="${currentView === 'rain' ? 'font-weight:bold; color:#4DA8DA;' : ''}">🌧️ Precipitation: <b>${station.rain.toFixed(1)} mm</b></div>
+                    <div class="popup-data" style="${currentView === 'temp' ? 'font-weight:bold; color:#4DA8DA;' : ''}">Ambient (T): <b>${station.T.toFixed(1)}°C</b></div>
+                    <div class="popup-data">Rel. Humidity: <b>${station.RH}%</b></div>
+                    <div class="popup-data" style="${currentView === 'wind' ? 'font-weight:bold; color:#4DA8DA;' : ''}">Wind Speed: <b>${station.windSpeedKmh.toFixed(1)} km/h (${station.dir})</b></div>
+                    <div class="popup-data" style="${currentView === 'gust' ? 'font-weight:bold; color:#4DA8DA;' : ''}">Max Gusts: <b>${station.gustsKmh > 0 ? station.gustsKmh.toFixed(1) + ' km/h' : 'N/A'}</b></div>
+                    <div class="popup-data" style="${currentView === 'rain' ? 'font-weight:bold; color:#4DA8DA;' : ''}">Precipitation: <b>${station.rain.toFixed(1)} mm</b></div>
                     <div class="popup-divider"></div>
-                    <div class="popup-data">🧪 Wet-Bulb (Tw): <b>${station.wbgtResults.Tw.toFixed(1)}°C</b></div>
-                    <div class="popup-data" style="color: #bbb;">☀️ Est. Globe (Tg): <b>${station.wbgtResults.Tg.toFixed(1)}°C</b></div>
+                    <div class="popup-data">Wet-Bulb (Tw): <b>${station.wbgtResults.Tw.toFixed(1)}°C</b></div>
+                    <div class="popup-data" style="color: #bbb;">Est. Globe (Tg): <b>${station.wbgtResults.Tg.toFixed(1)}°C</b></div>
                     <div class="popup-divider"></div>
-                    <div class="popup-data" style="font-size: 14px; ${currentView === 'hi' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">✨ Apparent Temp (Feels Like): <b>${station.hiVal.toFixed(1)}°C</b></div>
-                    <div class="popup-data" style="font-size: 14px; ${currentView === 'wbgt' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">🎯 Outdoor WBGT: <b>${station.wbgtResults.wbgt.toFixed(1)}°C</b></div>
+                    <div class="popup-data" style="font-size: 14px; ${currentView === 'hi' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">Apparent Temp (Feels Like): <b>${station.hiVal.toFixed(1)}°C</b></div>
+                    <div class="popup-data" style="font-size: 14px; ${currentView === 'wbgt' ? 'font-weight:bold; text-decoration: underline;' : ''} color:${getUnifiedHeatColor(station.hiVal)};">Outdoor WBGT: <b>${station.wbgtResults.wbgt.toFixed(1)}°C</b></div>
                     <div class="popup-divider"></div>
                     <div class="popup-data" style="font-size:12px; font-weight:600; color:${getUnifiedHeatColor(station.hiVal)};">
                         Current Status: ${getUnifiedFunnyText(station.hiVal)}

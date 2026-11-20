@@ -161,13 +161,12 @@
             transition: all 0.2s ease;
         }
         .toggle-btn:hover { background-color: #3a3a3c; color: #4DA8DA; }
-        #left-toggle { left: 15px; top: 75px; }
-        #right-toggle { right: 15px; top: 75px; }
+        #left-toggle { left: 15px; top: 15px; }
+        #right-toggle { right: 15px; top: 15px; }
 
-        /* Sleek Close Handles Positioned Securely Outside Menus */
         .close-menu-btn {
             position: absolute;
-            top: 75px;
+            top: 15px;
             width: 34px;
             height: 34px;
             border-radius: 50%;
@@ -212,9 +211,31 @@
         }
 
         @media (max-width: 768px) {
+            /* Header text */
+            #header { padding: 10px 14px; }
+            h1 { font-size: 18px; }
+            #header p { font-size: 11px; }
+            #timestamp { font-size: 11px; }
+            #app-viewport { height: calc(100vh - 82px); }
+
+            /* Menu toggle buttons */
+            .toggle-btn { top: 12px; padding: 7px 10px; font-size: 11px; }
             #left-toggle { left: 10px; }
-            #right-toggle { right: 10px; top: 120px; } 
-            
+            #right-toggle { right: 10px; }
+            .close-menu-btn { top: 12px; }
+
+            /* Sidebar text & buttons */
+            .sidebar-label { font-size: 10px; }
+            .nav-btn, .hko-btn { font-size: 12px; padding: 9px 11px; }
+            .nav-btn .badge-indicator { font-size: 10px; }
+            #live-clock { font-size: 22px; }
+            #local-outlook-container { font-size: 12px !important; }
+
+            /* Map badges & popups */
+            .wbgt-badge { font-size: 11px; padding: 4px 7px; min-width: 42px; }
+            .popup-title { font-size: 14px; }
+            .popup-data { font-size: 12px; }
+
             #sidebar.open ~ #left-close-btn { left: 310px; }
             #right-sidebar.open ~ #right-close-btn { right: 330px; }
         }
@@ -246,76 +267,76 @@
     <div id="header">
         <h1>Potato Weather - Hong Kong</h1>
         <p>Live T / Local RH / Local Wind Speed Integrated Map Layer</p>
-        <div id="timestamp">⏱️ Waiting to connect to weather services...</div>
+        <div id="timestamp">⏱Waiting to connect to weather services...</div>
     </div>
 
     <div id="app-viewport">
         <div id="sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label">🕒 System Local Time</div>
+                <div class="sidebar-label">System Local Time</div>
                 <div id="live-clock">00:00:00</div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">📊 Observatory Daily Extremes</div>
+                <div class="sidebar-label">Observatory Daily Extremes</div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="font-size: 13px; display: flex; justify-content: space-between;">
-                        <span>🔥 Max Temperature:</span>
+                        <span>Max Temperature:</span>
                         <b id="hko-max-temp" style="color: #ef4444;">--°C</b>
                     </div>
                     <div style="font-size: 13px; display: flex; justify-content: space-between;">
-                        <span>❄️ Min Temperature:</span>
+                        <span>Min Temperature:</span>
                         <b id="hko-min-temp" style="color: #38bdf8;">--°C</b>
                     </div>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">⚠️ Active Weather Warnings</div>
+                <div class="sidebar-label">Active Weather Warnings</div>
                 <div id="warnings-container" style="display: flex; flex-direction: column; gap: 6px;">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">Connecting to HKO alert grid...</span>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">☀️ Live UV Index</div>
+                <div class="sidebar-label">Live UV Index</div>
                 <div id="uv-container">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">Monitoring solar grid...</span>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🗺️ Map View Layers</div>
+                <div class="sidebar-label">Map View Layers</div>
                 <div class="view-nav-container">
                     <button class="nav-btn active" onclick="switchView('hi')" id="btn-hi">
-                        <span>✨ Feels Like (Apparent T)</span> <span class="badge-indicator">Wind-Aware</span>
+                        <span>Feels Like (Apparent T)</span> <span class="badge-indicator">Wind-Aware</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wbgt')" id="btn-wbgt">
-                        <span>🎯 Outdoor WBGT</span> <span class="badge-indicator">Safety Index</span>
+                        <span>Outdoor WBGT</span> <span class="badge-indicator">Safety Index</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('temp')" id="btn-temp">
-                        <span>🌡️ Ambient Temp</span> <span class="badge-indicator">°C</span>
+                        <span>Ambient Temp</span> <span class="badge-indicator">°C</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('wind')" id="btn-wind">
-                        <span>💨 Wind Speed &amp; Dir</span> <span class="badge-indicator">km/h</span>
+                        <span>Wind Speed &amp; Dir</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('gust')" id="btn-gust">
-                        <span>🌪️ Wind Gusts</span> <span class="badge-indicator">km/h</span>
+                        <span>Wind Gusts</span> <span class="badge-indicator">km/h</span>
                     </button>
                     <button class="nav-btn" onclick="switchView('rain')" id="btn-rain">
-                        <span>🌧️ Precipitation</span> <span class="badge-indicator">mm</span>
+                        <span>Precipitation</span> <span class="badge-indicator">mm</span>
                     </button>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌏 Other Regions</div>
-                <a href="tc.html" class="hko-btn lang-link">🇭🇰 香港天氣 (繁體中文)</a>
-                <a href="nzl.html" class="hko-btn lang-link">🇳🇿 New Zealand Weather</a>
+                <div class="sidebar-label">Other Regions</div>
+                <a href="tc.html" class="hko-btn lang-link">香港天氣 (繁體中文)</a>
+                <a href="nzl.html" class="hko-btn lang-link">New Zealand Weather</a>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-label">🌐 HKO Resources</div>
+                <div class="sidebar-label">HKO Resources</div>
                 <a href="https://www.hko.gov.hk/en/index.html" target="_blank" class="hko-btn">Official HKO Homepage</a>
                 <a href="https://www.hko.gov.hk/en/wxinfo/currwx/current.htm" target="_blank" class="hko-btn">Current Weather Details</a>
                 <a href="https://www.hko.gov.hk/en/opendata/index.htm" target="_blank" class="hko-btn">HKO Open Data Platform</a>
@@ -326,13 +347,13 @@
 
         <div id="right-sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-label">☀️ Today's Local Outlook</div>
+                <div class="sidebar-label">Today's Local Outlook</div>
                 <div id="local-outlook-container" style="font-size: 13px; line-height: 1.5; color: #ccc; font-style: italic;">
                     Retrieving short-term updates...
                 </div>
             </div>
             <div class="sidebar-section">
-                <div class="sidebar-label">📅 7-Day Forecast Grid</div>
+                <div class="sidebar-label">7-Day Forecast Grid</div>
                 <div id="forecast-grid-container" style="display: flex; flex-direction: column; gap: 10px;">
                     <span style="color: #8e8e93; font-size: 13px; font-style: italic;">Connecting to HKO forecast timeline...</span>
                 </div>
@@ -341,7 +362,7 @@
 
         <!-- System Menu Toggles -->
         <button id="left-toggle" class="toggle-btn" onclick="toggleLeftSidebar()">☰ System Menu</button>
-        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">📅 Forecast Summary ☰</button>
+        <button id="right-toggle" class="toggle-btn" onclick="toggleRightSidebar()">Forecast Summary ☰</button>
 
         <!-- Floating Circular Exit Handles -->
         <button id="left-close-btn" class="close-menu-btn" onclick="toggleLeftSidebar()">&times;</button>
@@ -354,33 +375,72 @@
         let cachedStationData = null;
         let currentView = 'hi';
 
-        function toggleLeftSidebar() { 
+        function toggleLeftSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
             const toggleBtn = document.getElementById('left-toggle');
-            sidebar.classList.toggle('open'); 
-            
+            const otherToggleBtn = document.getElementById('right-toggle');
+
+            if (rightSidebar && rightSidebar.classList.contains('open')) {
+                rightSidebar.classList.remove('open');
+                if (otherToggleBtn && window.innerWidth <= 1440) {
+                    otherToggleBtn.style.display = 'block';
+                }
+            }
+
+            sidebar.classList.toggle('open');
+
             if (sidebar.classList.contains('open')) {
                 toggleBtn.style.display = 'none';
+                if (otherToggleBtn) otherToggleBtn.style.display = 'none';
             } else {
                 if (window.innerWidth <= 1440) {
                     toggleBtn.style.display = 'block';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'block';
                 }
             }
         }
 
-        function toggleRightSidebar() { 
-            const sidebar = document.getElementById('right-sidebar');
+        function toggleRightSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
             const toggleBtn = document.getElementById('right-toggle');
-            sidebar.classList.toggle('open'); 
+            const otherToggleBtn = document.getElementById('left-toggle');
 
-            if (sidebar.classList.contains('open')) {
+            if (sidebar && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                if (otherToggleBtn && window.innerWidth <= 1440) {
+                    otherToggleBtn.style.display = 'block';
+                }
+            }
+
+            rightSidebar.classList.toggle('open');
+
+            if (rightSidebar.classList.contains('open')) {
                 toggleBtn.style.display = 'none';
+                if (otherToggleBtn) otherToggleBtn.style.display = 'none';
             } else {
                 if (window.innerWidth <= 1440) {
                     toggleBtn.style.display = 'block';
+                    if (otherToggleBtn) otherToggleBtn.style.display = 'block';
                 }
             }
         }
+
+        window.addEventListener('resize', () => {
+            const leftOpen = document.getElementById('sidebar')?.classList.contains('open');
+            const rightOpen = document.getElementById('right-sidebar')?.classList.contains('open');
+            const leftToggle = document.getElementById('left-toggle');
+            const rightToggle = document.getElementById('right-toggle');
+
+            if (window.innerWidth > 1440) {
+                if (leftToggle) leftToggle.style.display = 'none';
+                if (rightToggle) rightToggle.style.display = 'none';
+            } else {
+                if (leftToggle) leftToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+                if (rightToggle) rightToggle.style.display = (!leftOpen && !rightOpen) ? 'block' : 'none';
+            }
+        });
 
         function runLiveClock() {
             const clockElement = document.getElementById('live-clock');
@@ -632,10 +692,11 @@
                 if (typeof L === 'undefined') throw new Error("Leaflet map engine failed to load.");
 
                 if (!map) {
-                    map = L.map('map').setView([22.36, 114.14], 11);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    map = L.map('map', { zoomControl: false }).setView([22.36, 114.14], 11);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_5cph_1_b78e6b6881d9ea36d1c6c807', {
                         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20
                     }).addTo(map);
+                    L.control.zoom({ position: 'bottomright' }).addTo(map);
                 }
 
                 timestampEl.style.color = "#eab308";
